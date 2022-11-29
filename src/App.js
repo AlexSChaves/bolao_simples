@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
   const [time1, setTime1] = useState('');
@@ -7,6 +7,17 @@ function App() {
   const [gols2, setGols2] = useState('');
   const [apostador, setApostador] = useState('');
   const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const tasksStorage = localStorage.getItem('@tasks');
+    if (tasksStorage) {
+      setTasks(JSON.parse(tasksStorage));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('@tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -24,7 +35,11 @@ function App() {
     ]);
   }
 
-  console.log(tasks);
+  function handleClick(index) {
+    const tarefas = tasks.slice();
+    tarefas.splice(index, 1);
+    setTasks(tarefas);
+  }
 
   return (
     <>
@@ -90,10 +105,11 @@ function App() {
       <br />
 
       <ul>
-        {tasks.map((task) => (
-          <li key={task}>
+        {tasks.map((task, i) => (
+          <li key={i}>
             {task.time1} ({task.gols1}) x ({task.gols2}) {task.time2} -{' '}
-            {task.apostador}
+            {task.apostador}{' '}
+            {/* <button onClick={() => handleClick}>Exluir Aposta</button> */}
           </li>
         ))}
       </ul>
